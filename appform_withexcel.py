@@ -6,6 +6,8 @@ import ast
 import os
 import openpyxl
 
+filepath = "D:\AppForm\data.xlsx"
+
 def enter_data():
 
     # User info
@@ -30,8 +32,6 @@ def enter_data():
         print("Registration status", registration_status)
         print("------------------------------------------")
         
-        filepath = "D:\AppForm\data.xlsx"
-        
         if not os.path.exists(filepath):
             workbook = openpyxl.Workbook()
             sheet = workbook.active
@@ -47,13 +47,30 @@ def enter_data():
          
     else:
         messagebox.showwarning(title = "Error", message = "Name and Contact are required.")
+        
+def load_data():
+    global cols
+    top = Toplevel()
+    top.title("Candidates")
+    workbook = openpyxl.load_workbook(filepath)
+    sheet = workbook.active
 
+    list_values = list(sheet.values)
+    cols = list_values[0]
+    tree = ttk.Treeview(window, column= cols, show="headings")
+    for col_name in cols:
+        tree.heading(col_name, text = col_name)
+    tree.pack(expand=True, fill='y')
+
+    for value_tuple in list_values[1:]:
+        tree.insert('',END, values=value_tuple)
+    
 
 window = Tk()
 window.title("Application form")
 window.geometry("925x500+300+200")
 window.configure(bg="#fff")
-window.resizable(False, False)
+window.resizable(True, True)
 
 img = PhotoImage(file='D:\AppForm\login.png')
 img = img.zoom(25)
@@ -121,7 +138,10 @@ numsemesters_spinbox.grid(row=2, column=1)
 for widget in user_info_frame.winfo_children():
     widget.grid_configure(padx = 3, pady = 3)
 
-button = Button(frame, text="Enter data", command= enter_data,fg="black",border = 0, bg = 'white', font = ("Microsoft YaHei UI Light",12))
+button = Button(frame, text="Enter data", command= enter_data,fg="black",border = 1, bg = 'white', font = ("Microsoft YaHei UI Light",12))
 button.grid(row=3, column=0, sticky="news", padx=20, pady=10)
+
+displaybutton = Button(frame, text="Display Entered Data", command= load_data, fg = "black", border = 1, bg = 'white', font = ("Microsoft YaHei UI Light",10))
+displaybutton.grid(row=4, column=0, padx=20, pady=10)
 
 window.mainloop()
