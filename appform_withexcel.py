@@ -49,9 +49,6 @@ def enter_data():
         messagebox.showwarning(title = "Error", message = "Name and Contact are required.")
         
 def load_data():
-    global cols
-    top = Toplevel()
-    top.title("Candidates")
     workbook = openpyxl.load_workbook(filepath)
     sheet = workbook.active
 
